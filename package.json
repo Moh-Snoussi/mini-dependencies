@@ -1,0 +1,19 @@
+{
+  "name": "minimum-dependencies",
+  "version": "1.0.0",
+  "bin": {
+    "md-app": "./bin/create-web-app.js",
+    "mdev": "./bin/mdev.js"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "node final/index.mjs"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "express": "^4.18.2",
+    "html-minifier-terser": "^7.2.0",
+    "js-beautify": "^1.15.4",
+    "jsdom": "^26.0.0"
+  }
+}
