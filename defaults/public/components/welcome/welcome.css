@@ -1,11 +1,10 @@
 
 * {
-
     /* scoped to the component */
     color: hsl(var(--hue, 0), 70%, 60%);
 }
 
-.__COMPONENT_NAME__-container {
+.welcome-container {
     border: 1px solid hsl(var(--hue, 0), 70%, 60%);
     mix-blend-mode: difference;
     padding: 1rem;

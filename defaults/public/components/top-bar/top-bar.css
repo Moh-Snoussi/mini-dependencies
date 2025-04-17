@@ -1,0 +1,79 @@
+.top-bar-container {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.top-bar-logo {
+    height: var(--logo-height, 35px);
+    width: var(--logo-width, 35px);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Added styles to ensure the toggle button stays in the same position and animates smoothly */
+.menu-toggle {
+    background-color: unset;
+    border: none;
+    color: #854e4e;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.top-bar-menu.open+.menu-toggle {
+    transform: rotate(90deg);
+}
+
+/* Added styles to make the menu items horizontal and enable horizontal scrolling for the container */
+.top-bar-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+
+    transform: translateX(150vw);
+    transition: transform 0.2s ease-out;
+}
+
+.top-bar-menu ul {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding-right: 2rem;
+    margin: 0;
+}
+
+.top-bar-menu li {
+    margin-right: 1rem;
+}
+
+.top-bar-menu li a {
+    text-decoration: none;
+    color: #854e4e;
+    transition: background-color 0.3s ease-in-out;
+    text-transform: uppercase;
+    padding: 0.1rem 1rem;
+    border-radius: 5px;
+}
+
+.top-bar-menu li a:hover {
+    background-color: #deffd7;
+}
+
+
+.top-bar-menu.open {
+    display: flex;
+    transform: translateX(0);
+    transition: transform 0.2s ease-out;
+}
+
+li[data-top-bar-menu-item] {
+    display: flex;
+    align-items: center;
+    /* vertical center */
+    justify-content: center;
+    /* horizontal center */
+    list-style: none;
+}

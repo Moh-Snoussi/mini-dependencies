@@ -2,6 +2,7 @@
 import fs from "fs";
 import path from 'path';
 import os from "os";
+import { execSync } from "child_process";
 
 export function readFileIfExists(filepath) {
   return fs.existsSync(filepath) ? fs.readFileSync(filepath, "utf-8") : "";

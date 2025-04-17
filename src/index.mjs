@@ -24,7 +24,11 @@ reloadManager.injectReloadScript();
 const server = new DevServer(config.outDir, reloadManager, config.port, config.host);
 server.start();
 
-server.watch([config.srcDir, config.publicDir], () => {
+server.watch([config.srcDir, config.publicDir], (eventName, pth) => {
+  // if pth is a public/ non-html file copy it to outDir
+  if (pth.startsWith(config.publicDir) && !pth.endsWith(".html")) {
+    builder.copyToOutDir(pth);
+  }
   builder.buildAll();
   reloadManager.injectReloadScript();
 });

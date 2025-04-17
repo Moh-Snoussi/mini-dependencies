@@ -1,0 +1,13 @@
+
+* {
+    /* scoped to the component */
+    color: black;
+}
+
+.welcome-container {
+    border: 1px solid gray;
+    mix-blend-mode: difference;
+    padding: 1rem;
+    margin: 1rem;
+    background-color: turquoise;
+}

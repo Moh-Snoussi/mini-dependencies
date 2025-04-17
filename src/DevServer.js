@@ -2,6 +2,7 @@
 import chokidar from "chokidar";
 import express from "express";
 import os from "os";
+import path from "path";
 import { getLocalIps } from "./utils.js";
 
 export class DevServer {
@@ -29,6 +30,6 @@ export class DevServer {
 
   watch(watchPaths, onChange) {
     chokidar.watch(watchPaths, { ignoreInitial: true })
-      .on("all", () => onChange());
+      .on("all", (eventName, pth) => onChange(eventName, pth));
   }
 }

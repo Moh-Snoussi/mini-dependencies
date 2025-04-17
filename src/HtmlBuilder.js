@@ -54,4 +54,17 @@ export class HTMLBuilder {
       }
     });
   }
+
+  copyToOutDir(srcPath) {
+    // /home/moamed/Projects/foo/public/assets/css/main.css
+    if (!fs.existsSync(this.outDir)) {
+      fs.mkdirSync(this.outDir, { recursive: true });
+    }
+
+    const assetRPath = path.relative(this.publicDir, srcPath);
+
+    console.log('assetRPath', assetRPath);
+    fs.copyFileSync(srcPath, path.join(this.outDir, assetRPath), fs.constants.COPYFILE_FICLONE);
+  }
+
 }

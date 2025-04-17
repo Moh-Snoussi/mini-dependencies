@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const __dirname = process.cwd();
 
 export const config = {
-  srcDir: path.resolve(__dirname, "./src/"),
+  srcDir: path.resolve(__dirname, "./public/components"),
   publicDir: path.resolve(__dirname, "./public"),
   outDir: path.resolve(__dirname, "./dist"),
   port: process.env.PORT || 3000,
