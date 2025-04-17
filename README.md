@@ -16,8 +16,6 @@ components/welcome/welcome.js   → Loaded as a class and initialized
 components/welcome/welcome.css  → Scoped styles per component
 ```
 
-No configs. No noise. Just clean separation and full control.
-
 ## Features
 
 - 🔹 **Modular Components** – Self-contained HTML, JS, and CSS
