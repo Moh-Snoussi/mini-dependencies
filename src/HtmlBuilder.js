@@ -2,7 +2,9 @@
 import fs from "fs";
 import path from "path";
 import { ComponentLoader } from "./ComponentLoader.js";
-import { copyDir, readFileIfExists } from "./utils.js";
+import { copyDir, findFiles, readFileIfExists } from "./utils.js";
+import { Logger } from "./Logger.js";
+import { JSDOM } from 'jsdom';
 
 export class HTMLBuilder {
   constructor({ srcDir, publicDir, outDir, onRebuild }) {
@@ -46,6 +48,7 @@ export class HTMLBuilder {
 
   buildAll(prod = false) {
     this.buildComponentDir();
+    this.runTests();
     fs.readdirSync(this.publicDir).forEach(file => {
       if (file.endsWith(".html")) {
         const input = path.join(this.publicDir, file);
@@ -55,16 +58,63 @@ export class HTMLBuilder {
     });
   }
 
+  /**
+   * Tests are any file that ends with .test.js
+   * They will run automatically when the build is run
+   */
+  async runTests() {
+    // recursively find all .test.js files in srcDir
+    const testFiles = findFiles(this.srcDir, ".test.mjs");
+
+    const { window } = new JSDOM(`<!DOCTYPE html><html><body></body></html>`);
+    global.document = window.document;
+
+    for (const testFile of testFiles) {
+      let baseName = path.basename(testFile);
+      try {
+        const testModule = await import(testFile);
+        if (testModule.default) {
+          const test = testModule.default;
+          if (typeof test === "function") {
+            console.log(`[TEST] ${baseName} started`);
+            await test();
+            console.log(`[TEST] ${baseName} finished`);
+          } else {
+            console.warn(`[TEST] ${baseName} is not a function`);
+          }
+        } else {
+          console.warn(`[TEST] ${baseName} has no default export`);
+        }
+      } catch (error) {
+        Logger.error(`[TEST] ${baseName} failed:\n\n ${error.message}`, 'error');
+        Logger.error(error.stack);
+      }
+    }
+  }
+
   copyToOutDir(srcPath) {
-    // /home/moamed/Projects/foo/public/assets/css/main.css
     if (!fs.existsSync(this.outDir)) {
       fs.mkdirSync(this.outDir, { recursive: true });
     }
 
-    const assetRPath = path.relative(this.publicDir, srcPath);
+    if (!fs.existsSync(srcPath)) {
+      console.warn(`Source path does not exist: ${srcPath}`);
+      return; // Exit if the source path no longer exists
+    }
 
-    console.log('assetRPath', assetRPath);
-    fs.copyFileSync(srcPath, path.join(this.outDir, assetRPath), fs.constants.COPYFILE_FICLONE);
+    const assetRPath = path.relative(this.publicDir, srcPath);
+    const destPath = path.join(this.outDir, assetRPath);
+
+    if (fs.lstatSync(srcPath).isDirectory()) {
+      // Recursively copy directory
+      fs.mkdirSync(destPath, { recursive: true });
+      fs.readdirSync(srcPath).forEach(child => {
+        this.copyToOutDir(path.join(srcPath, child));
+      });
+    } else {
+      // Copy file
+      fs.copyFileSync(srcPath, destPath, fs.constants.COPYFILE_FICLONE);
+    }
   }
 
 }

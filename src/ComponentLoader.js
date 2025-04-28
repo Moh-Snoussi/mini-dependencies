@@ -48,12 +48,21 @@ export class ComponentLoader {
       let routeName = "";
       let outCompPath = path.join(this.outDir, ComponentLoader.COMPONENTS_DIR, ...parents, comp, routeName);
       this.scaffoldComponent(comp, compPath, fileName);
+
+      let usePage = false;
+      if (fileName.endsWith(".comp.html")) {
+        // a component is a html file with its own html, css and js
+        this.addToLoader(comp, compPath, fileName);
+      }
       if (!fileName.endsWith("index.html")) {
         // non index component, resolves to the same name as the current page
         // a welcome component in a play.html resolves to /components/play/welcome/welcome.html
         routeName = fileName.replace(/\.html$/, "");
-        compPath = path.join(compPath, routeName);
-        outCompPath = path.join(outCompPath, routeName);
+        if (fs.existsSync(path.join(compPath, routeName))) {
+          compPath = path.join(compPath, routeName);
+          outCompPath = path.join(outCompPath, routeName);
+          usePage = true;
+        }
       }
       console.log('compPath:', compPath, 'outCompPath:', outCompPath);
 
@@ -81,8 +90,10 @@ export class ComponentLoader {
       const scopedCss = compCssRaw ? scopeCss(compCssRaw, compId) : "";
       const styleTag = scopedCss ? `<style>${scopedCss}</style>` : "";
 
-      let clientImportPath = path.join('/',ComponentLoader.COMPONENTS_DIR, ...parents, comp, routeName, `${comp}.js`);
-      console.log('routeName:', routeName, 'clientImportPath:', clientImportPath);
+      let clientImportPath = path.join('/', ComponentLoader.COMPONENTS_DIR, ...parents, comp, routeName, `${comp}.js`);
+      if (!usePage) {
+        clientImportPath = path.join('/', ComponentLoader.COMPONENTS_DIR, ...parents, comp, `${comp}.js`);
+      }
 
       const scriptTag = compJs ? `<script>
       import("${clientImportPath}").then(mod => {
@@ -107,7 +118,11 @@ export class ComponentLoader {
   scaffoldComponent(compName, compPath, pageName) {
     if (pageName !== 'index.html') {
       let routeName = path.basename(pageName, ".html");
-      compPath = path.join(compPath, routeName);
+      let compSubPath = path.join(compPath, routeName);
+      if (fs.existsSync(compSubPath)) {
+        // only scaffold if a page component is already created
+        compPath = compSubPath;
+      }
     }
 
     if (!fs.existsSync(compPath)) {

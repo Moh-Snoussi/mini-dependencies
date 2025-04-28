@@ -10,6 +10,22 @@ export function readFileIfExists(filepath) {
 
 export function scopeCss(css, scopeID) {
   return css.replace(/(^|\})\s*([^\{\}]+)\s*\{/g, (_, end, selector) => {
+
+    if (selector.trim().startsWith('@')) {
+      return `${end} ${selector} {`; // Skip scoping for @keyframes or similar
+    }
+
+    // check if start with a number and then a % sign or from, to, or calc
+    if (/^\d+%/|/^from|to|calc/.test(selector.trim())) {
+      return `${end} ${selector} {`; // Skip scoping for percentage selectors
+    }
+
+    // allow :root and :host
+    if (/^(:root|:host)/.test(selector.trim())) {
+      return `${end} ${selector} {`; // Skip scoping for :root or :host
+    }
+
+
     const scoped = selector
       .split(',')
       .map(s => `[data-component-id="${scopeID}"] ${s.trim()}`)
@@ -19,7 +35,11 @@ export function scopeCss(css, scopeID) {
 }
 
 export function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  let str1 = str.charAt(0).toUpperCase() + str.slice(1);
+  // "-" to Uppercase foo-bar => FooBar
+  str1 = str1.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+
+  return str1;
 }
 
 export function readFilesreplace(replaceMap, ...filePths) {
@@ -46,7 +66,7 @@ export async function copyDir(src, dest) {
     } else {
       fs.copyFileSync(srcPath, destPath);
     }
-})
+  })
 }
 
 export function copyDirNReplace(replaceMap, src, dest) {
@@ -101,3 +121,18 @@ export function getLocalIps() {
 
   return ips;
 }
+
+
+export function findFiles(dir, ext) {
+  const files = [];
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...findFiles(fullPath, ext));
+    } else if (entry.isFile() && entry.name.endsWith(ext)) {
+      files.push(fullPath);
+    }
+  });
+  return files;
+}
+

@@ -1,6 +1,6 @@
 # Minimum Dependencies App
 
-**Minimum Dependencies APP** is a zero-bloat build tool and dev server for modular web apps. No frameworks, just clean, native components.
+**Minimum Dependencies APP** is a zero-bloat build tool and dev server for modular web apps. No frameworks, just clean, native.
 
 ### Components:
 A component is defined via `data-component="welcome"` in your HTML:
@@ -18,7 +18,7 @@ components/welcome/welcome.css  → Scoped styles per component
 ```
 
 ### Pages:
-A page is a html file in the public folder, e.g. if we have a welcome-component in `public/play.html`. the component will be stored in `components/welcome/play/welcome.html, css and js`.
+A page is a html file in the public folder, e.g. if we have a welcome-component in `public/play.html`. the component will be fetched from in `components/welcome/play/welcome.html, css and js` if found a /component/welcome/play, otherwise will use components/welcome/welcome.html, css and js.
 
 ## Features
 
