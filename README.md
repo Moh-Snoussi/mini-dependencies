@@ -36,7 +36,12 @@ A page is a html file in the public folder, e.g. if we have a welcome-component 
 ### Install
 
 ```bash
-npm install -g mini-dependencies
+# clone the repo
+git clone git@github.com:Moh-Snoussi/mini-dependencies.git && cd mini-dependencies
+npm install
+npm link # now the package is available globally
+md-app --help # creates a new app
+mda --help # to build with hot reload server
 ```
 
 ### Create & Run
