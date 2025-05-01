@@ -21,11 +21,11 @@ export default class BaseComponent {
     getTemplate(tempateName, replaceMap = {}) {
         let template = this.container.querySelector(`[data-component-template="${this.constructor.name + '-' + tempateName}"]`);
         if (!template) return;
-        this.fragmentToHtml(template.content.cloneNode(true));
+        let el = this.fragmentToHtml(template.content.cloneNode(true));
         for (const [key, value] of Object.entries(replaceMap)) {
-            template.innerHTML = this.replace(template.innerHTML, { [key]: value });
+            el.innerHTML = this.replace(el.innerHTML, { [key]: value });
         }
-        return this.fragmentToHtml(template.content.cloneNode(true));
+        return el;
     }
 
     loaded() {
