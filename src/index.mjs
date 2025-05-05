@@ -19,7 +19,10 @@ const prod = process.argv.includes("--prod");
 
 builder.cleanOutputDir();
 builder.buildAll(prod);
-reloadManager.injectReloadScript();
+
+if (!prod) {
+  reloadManager.injectReloadScript();
+}
 
 const server = new DevServer(config.outDir, reloadManager, config.port, config.host);
 server.start();
@@ -30,6 +33,13 @@ server.watch([config.srcDir, config.publicDir], (eventName, pth) => {
     builder.copyToOutDir(pth);
   }
   builder.buildAll();
-  reloadManager.injectReloadScript();
+
+  if (!prod) {
+    reloadManager.injectReloadScript();
+  }
 });
 
+if (prod) {
+  server.close();
+  process.exit(0);
+}

@@ -1,3 +1,5 @@
+import Question from "./Question.js";
+
 export default class BaseComponent {
     static inst;
     /**
@@ -8,23 +10,19 @@ export default class BaseComponent {
 
     constructor(componentId) {
         this.container = document.querySelector(`[data-component-id='${componentId}']`);
-        this.container.style.setProperty('--hue', Math.floor(Math.random() * 360));
-
-        if (!this.inst) {
-            this.inst = this;
-        }
-
+        this.questionService = Question;
         this.loaded();
     }
-
 
     getTemplate(tempateName, replaceMap = {}) {
         let template = this.container.querySelector(`[data-component-template="${this.constructor.name + '-' + tempateName}"]`);
         if (!template) return;
+
         let el = this.fragmentToHtml(template.content.cloneNode(true));
         for (const [key, value] of Object.entries(replaceMap)) {
             el.innerHTML = this.replace(el.innerHTML, { [key]: value });
         }
+
         return el;
     }
 
@@ -43,7 +41,7 @@ export default class BaseComponent {
     fragmentToHtml(fragment) {
         const temp = document.createElement("div");
         temp.appendChild(fragment.cloneNode(true));
-        return temp.firstElementChild;
+        return temp;
     }
 
     replace(content, replaceMap) {
@@ -68,7 +66,7 @@ export default class BaseComponent {
     }
 
     async getConfig(key) {
-        const config = JSON.parse(window.localStorage.getItem('config'));
+        const config =  JSON.parse(window.localStorage.getItem('config'));
 
         if (!config || !config[key]) {
             const configRes = await fetch('config.json');

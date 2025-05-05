@@ -6,6 +6,8 @@ import path from "path";
 import { getLocalIps } from "./utils.js";
 
 export class DevServer {
+  static server;
+
   constructor(outDir, reloadManager, port, host) {
     this.outDir = outDir;
     this.reloadManager = reloadManager;
@@ -21,11 +23,20 @@ export class DevServer {
       this.reloadManager.register(res);
     });
 
-    app.listen(this.port, this.host, () => {
+    let server = app.listen(this.port, this.host, () => {
       const ips = getLocalIps();
       console.log(`\n[serve] http://${this.host}:${this.port}`);
       ips.forEach(ip => console.log(`[serve] http://${ip}:${this.port}`));
     });
+
+    DevServer.server = server;
+  }
+
+  close() {
+    if (DevServer.server) {
+      DevServer.server.close();
+      console.log("[serve] Server closed");
+    }
   }
 
   watch(watchPaths, onChange) {

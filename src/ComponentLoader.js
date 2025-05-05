@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
-import { minify } from 'html-minifier-terser';
+import { minify } from "html-minifier";
 import jsBeautify from 'js-beautify';
 import { readFileIfExists, scopeCss, capitalize, readFilesreplace } from "./utils.js";
 
